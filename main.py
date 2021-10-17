@@ -1,4 +1,6 @@
 class Item:
+    pay_rate = 0.8  # class attribute
+
     def __init__(self, name: str, price: float, quantity=0):
         # validate received arguments
         # can raise AssertionError
@@ -6,6 +8,7 @@ class Item:
         assert quantity >= 0, f"Quantity must be grater than 0 but {quantity}"
 
         # Assign to self object
+        # instance attribute
         self.name = name
         self.price = price
         self.quantity = quantity
@@ -13,11 +16,17 @@ class Item:
     def calculate_total_price(self):
         return self.price * self.quantity
 
+    def apply_discount(self):
+        self.price = self.price * Item.pay_rate
 
-item1 = Item("Phone", 100, -1)
+
+item1 = Item("Phone", 100, 0)
 # 다이나믹, 스크립팅 언어 객체를 생성한 이후에 필드를 추가할 수 있다.
-item1.has_num_pad = False
-print(item1.calculate_total_price())
+
+print(Item.pay_rate)
+print(item1.pay_rate)  # 먼저 instance attribute 를 찾아보고 없으면 클래스 attribute 를 찾아본다.
+print(Item.__dict__)  # All the attributes for Class Level
+print(item1.__dict__)  # All the attributes for Instance Level
 
 # __method__ : magic method
 # __init__ : 생성자 함수
