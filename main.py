@@ -1,5 +1,9 @@
+import csv
+
+
 class Item:
     pay_rate = 0.8
+    all = []
 
     def __init__(self, name: str, price: float, quantity=0):
         assert price >= 0
@@ -9,21 +13,41 @@ class Item:
         self.price = price
         self.quantity = quantity
 
+        # actions to execute
+        Item.all.append(self)
+
     def calculate_total_price(self):
         return self.price * self.quantity
 
     def apply_discount(self):
-        # self.pay_rate vs Item.pay_rate
-        # sel_pay_rate로 선언할 경우 인스턴스 별로 pay_rate를 다르게 설정할 수 가 있다.
-        self.price = self.price * self.pay_rate # instance level => class level 로 찾는다.
+        self.price = self.price * self.pay_rate
 
+    @classmethod
+    def instantiate_from_csv(cls):
+        with open('items.csv', 'r') as f:
+            reader = csv.DictReader(f)
+            items = list(reader)
 
-item1 = Item("Phone", 100, 0)
-item1.apply_discount()
-print(item1.price)
+        for item in items:
+            Item(
+                name=item.get('name'),
+                price=float(item.get('price')),
+                quantity=int(item.get('quantity'))
+            )
 
-item2 = Item("Laptop", 1000, 0)
-item2.pay_rate = 0.7 # 인스턴스 멤버를 추가한 것이지 class attribute를 변경한 것이 아니다.
-item2.apply_discount()
-print(item2.price)
+    @staticmethod
+    def is_integer(num):
+        # we will count out the floats that are point zero
+        if isinstance(num, float):
+            return num.is_integer()
+        elif isinstance(num, int):
+            return True
+        return False
 
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+print(Item.is_integer(7))
